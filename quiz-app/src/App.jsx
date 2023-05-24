@@ -1,7 +1,7 @@
-import './App.css'
 import Homepage from '../components/Homepage'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import Quiz from '../components/Quiz'
+import './App.css'
 
 function App() {
 

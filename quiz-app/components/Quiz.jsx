@@ -1,87 +1,59 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { quizData } from './quizData';
 
-export default function Quiz() {
+const Quiz = () => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const quiz = [
-    {
-      question: "What is a Computer",
-      answers: {
-        animal: false,
-        bird: false,
-        machine: true,
-        tree: false,
-      },
-      correctAnswer: "machine",
-    },
-    {
-      question: "What is a Lion",
-      answers: {
-        animal: true,
-        bird: false,
-        machine: false,
-        tree: false,
-      },
-      correctAnswer: "animal",
-    },
-    {
-      question: "What is a Sparrow",
-      answers: {
-        animal: false,
-        bird: true,
-        machine: false,
-        tree: false,
-      },
-      correctAnswer: "bird",
-    },
-  ];
+  const [showScore, setShowScore] = useState(false);
 
   const handleAnswerClick = (selectedAnswer) => {
-    setSelectedAnswer(selectedAnswer);
-    if (selectedAnswer === currentQuestion.correctAnswer) {
+    const isCorrect = selectedAnswer === quizData[currentQuestion].answer;
+    if (isCorrect) {
       setScore(score + 1);
     }
-  };
 
-  const handleNextQuestion = () => {
-    const currentQuestion = quiz[questionIndex];
-    setSelectedAnswer(null);
-    if (questionIndex < quiz.length - 1) {
-      setQuestionIndex(questionIndex + 1);
+    const nextQuestion = currentQuestion + 1;
+    if (nextQuestion < quizData.length) {
+      setCurrentQuestion(nextQuestion);
     } else {
-      setQuestionIndex(0);
-      alert(`Quiz completed. Your score is ${score} out of ${quiz.length}.`);
-      setScore(0);
+      setShowScore(true);
     }
   };
 
-  const currentQuestion = quiz[questionIndex];
-  const answerOptions = Object.keys(currentQuestion.answers);
+  const handleRestartQuiz = () => {
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowScore(false);
+  };
 
   return (
-    <div>
-      <h3>Your Score {score}</h3>
-      <h4>{currentQuestion.question}</h4>
-      <ul style={{ listStyleType: "none", padding: 0 }}>
-        {answerOptions.map((answerOption) => (
-          <li
-            key={answerOption}
-            style={{ display: "inline-block", margin: "10px" }}
-          >
-            <input
-              type="radio"
-              id={answerOption}
-              name="answer"
-              value={answerOption}
-              checked={selectedAnswer === answerOption}
-              onChange={() => handleAnswerClick(answerOption)}
-            />
-            <label>{answerOption}</label>
-          </li>
-        ))}
-      </ul>
-      <button onClick={handleNextQuestion}>Next</button>
+    <div className="quiz">
+      {showScore ? (
+        <>
+          <div className="score">Your score: {score}</div>
+          <button className="restart-button" onClick={handleRestartQuiz}>
+            Restart Quiz
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="question">
+            {quizData[currentQuestion].question}
+          </div>
+          <div className="options">
+            {quizData[currentQuestion].options.map((option) => (
+              <button
+                key={option}
+                onClick={() => handleAnswerClick(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
-}
+};
+
+export default Quiz;
